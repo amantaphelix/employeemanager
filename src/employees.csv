@@ -1,0 +1,4 @@
+emp_id,first_name,last_name,email,phone,department,salary,join_date
+101,John,Doe,john.doe@example.com,9876543210,Engineering,75000,2021-06-15
+102,Jane,Smith,jane.smith@example.com,9876501234,Marketing,65000,2022-01-10
+103,Robert,Brown,robert.brown@example.com,9876512345,Sales,72000,2020-12-01
