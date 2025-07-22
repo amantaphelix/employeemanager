@@ -1,7 +1,9 @@
-package employeemanager;
+package com.litmus7.employeemanager;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBConnection {
 
@@ -10,9 +12,9 @@ public class DBConnection {
                                                .load();
 
     public static Connection getConnection() throws SQLException {
-        String url = dotenv.get("DB_URL");
-        String user = dotenv.get("DB_USER");
-        String password = dotenv.get("DB_PASSWORD");
+        final String url = dotenv.get("DB_URL");
+        final String user = dotenv.get("DB_USER");
+        final String password = dotenv.get("DB_PASSWORD");
         return DriverManager.getConnection(url, user, password);
     }
 

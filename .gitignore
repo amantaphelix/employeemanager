@@ -1,17 +1,15 @@
-# Ignore compiled Java classes
+
 *.class
 
-# Ignore bin/ directory (compiled output)
 bin/
 
-# Ignore environment config files
 *.env
 
-# Ignore temporary/OS files
+
 *.log
 *.DS_Store
 
-# Ignore Eclipse project files (optional if you're collaborating with others)
+
 .project
 .classpath
 .settings/
