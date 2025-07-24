@@ -11,7 +11,7 @@ import com.litmus7.employeemanager.dto.Employee;
 public class EmployeeManagerController {
 	private EmployeeService service = new EmployeeService();
 
-	public Response<String> importCSV(String filePath) {
+	public Response<String> writeDataToDB(String filePath) {
 	    boolean result = service.importEmployeesToDB(filePath);
 
 	    if (result) {
