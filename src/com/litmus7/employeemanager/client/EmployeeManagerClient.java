@@ -8,7 +8,7 @@ import com.litmus7.employeemanager.dto.Response;
 public class EmployeeManagerClient {
     public static void main(String[] args) {
         EmployeeManagerController controller = new EmployeeManagerController(); 
-        Response<String> response = controller.writeDataToDB("src/com/litmus7/employeemanager/data/employees.cv");
+        Response<String> response = controller.writeDataToDB("src/com/litmus7/employeemanager/data/employees.csv");
         System.out.println("Status Code: " + response.getStatusCode());
 
         if (response.getErrorMessage() != null) {
