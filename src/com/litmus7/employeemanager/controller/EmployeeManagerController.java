@@ -12,6 +12,14 @@ public class EmployeeManagerController {
 	private EmployeeService service = new EmployeeService();
 
 	public Response<String> writeDataToDB(String filePath) {
+		if (filePath == null || filePath.trim().isEmpty()) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE, "File path is missing.", null);
+	    }
+
+	    if (!filePath.toLowerCase().endsWith(".csv")) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE, "Provided file is not a CSV.", null);
+	    }
+	    
 	    boolean result = service.importEmployeesToDB(filePath);
 
 	    if (result) {
