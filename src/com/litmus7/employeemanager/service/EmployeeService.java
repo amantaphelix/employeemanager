@@ -43,53 +43,21 @@ public class EmployeeService {
 	            String salaryStr = row[6].trim();
 	            String joinDateStr = row[7].trim();
 
-	            boolean valid = true;
-
-	            if (!ValidationUtils.isValidName(firstName)) {
-	                errorMessages.add("Row " + i + ": Invalid first name");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidName(lastName)) {
-	                errorMessages.add("Row " + i + ": Invalid last name");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidEmail(email)) {
-	                errorMessages.add("Row " + i + ": Invalid email");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidPhone(phone)) {
-	                errorMessages.add("Row " + i + ": Invalid phone");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidDepartment(department)) {
-	                errorMessages.add("Row " + i + ": Invalid department");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidSalary(salaryStr)) {
-	                errorMessages.add("Row " + i + ": Invalid salary");
-	                valid = false;
-	            }
-
-	            if (!ValidationUtils.isValidJoinDate(joinDateStr)) {
-	                errorMessages.add("Row " + i + ": Invalid join date");
-	                valid = false;
-	            }
-
-	            if (!valid) continue;
-
 	            double salary = Double.parseDouble(salaryStr);
 	            LocalDate joinDate = LocalDate.parse(joinDateStr);
 
 	            Employee employee = new Employee(employeeId, firstName, lastName, email, phone, department, salary, joinDate);
+
+	            if (!ValidationUtils.validateEmployee(employee)) {
+	                errorMessages.add("Row " + i + ": Validation failed");
+	                continue;
+	            }
+
 	            if (dao.employeeExists(employeeId)) {
 	                errorMessages.add("Row " + i + ": Duplicate entry for Employee ID " + employeeId);
 	                continue;
 	            }
+
 	            if (dao.saveEmployee(employee)) {
 	                successCount++;
 	            } else {
@@ -101,14 +69,14 @@ public class EmployeeService {
 	        }
 	    }
 
-	   //printing errorMessages for debug
+	    //debug print
 	    for (String err : errorMessages) {
 	        System.err.println(err);
 	    }
 
 	    return successCount == data.size() - 1 && errorMessages.isEmpty();
 	}
-	
+
 	public List<Employee> getAllEmployees() {
 	    return dao.getAllEmployees();
 	}

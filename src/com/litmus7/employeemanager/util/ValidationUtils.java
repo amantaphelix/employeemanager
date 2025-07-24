@@ -2,6 +2,8 @@ package com.litmus7.employeemanager.util;
 
 import java.util.regex.Pattern;
 
+import com.litmus7.employeemanager.dto.Employee;
+
 public class ValidationUtils {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
@@ -32,5 +34,14 @@ public class ValidationUtils {
     }
     public static boolean isValidJoinDate(String date) {
         return JOIN_DATE_PATTERN.matcher(date).matches();
+    }
+    public static boolean validateEmployee(Employee employee) {
+        return isValidName(employee.getFirstName()) &&
+               isValidName(employee.getLastName()) &&
+               isValidEmail(employee.getEmail()) &&
+               isValidPhone(employee.getPhone()) &&
+               isValidDepartment(employee.getDepartment()) &&
+               isValidSalary(String.valueOf(employee.getSalary())) &&
+               isValidJoinDate(employee.getJoinDate().toString());
     }
 }
