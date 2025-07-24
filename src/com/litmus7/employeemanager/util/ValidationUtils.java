@@ -1,4 +1,4 @@
-package com.litmus7.employeemanager;
+package com.litmus7.employeemanager.util;
 
 import java.util.regex.Pattern;
 
