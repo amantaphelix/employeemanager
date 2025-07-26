@@ -11,7 +11,7 @@ import com.litmus7.employeemanager.dto.Employee;
 public class EmployeeManagerController {
 	private EmployeeService service = new EmployeeService();
 
-	public Response<String> writeDataToDB(String filePath) {
+	public Response<Integer> writeDataToDB(String filePath) {
 		if (filePath == null || filePath.trim().isEmpty()) {
 	        return new Response<>(ApplicationStatusCodes.FAILURE, "File path is missing.", null);
 	    }
@@ -20,14 +20,17 @@ public class EmployeeManagerController {
 	        return new Response<>(ApplicationStatusCodes.FAILURE, "Provided file is not a CSV.", null);
 	    }
 	    
-	    boolean result = service.importEmployeesToDB(filePath);
-
-	    if (result) {
-	        return new Response<>(ApplicationStatusCodes.SUCCESS, null, "All records inserted successfully");
-	    } else {
-	        return new Response<>(ApplicationStatusCodes.FAILURE, "Some records failed to insert.", null);
+	    int[] result = service.importEmployeesToDB(filePath);
+	    int total = result[0];
+	    int insertedCount = result[1];
+	    if (insertedCount == 0) {
+	        return new Response<>(500, "No records were inserted.", null);
+	    } else if (insertedCount < total) {
+	        return new Response<>(207, "Partial insert: " + insertedCount + " of " + total + " inserted.", insertedCount);
+	    } else
+	        return new Response<>(200, null, insertedCount); 
 	    }
-	}
+
 	
 	public Response<List<Employee>> getAllEmployees() {
         List<Employee> employeeList = service.getAllEmployees();

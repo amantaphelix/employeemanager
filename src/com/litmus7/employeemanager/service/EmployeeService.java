@@ -13,7 +13,7 @@ import com.litmus7.employeemanager.dao.EmployeeDao;
 public class EmployeeService {
 	private EmployeeDao dao = new EmployeeDao();
 	
-	public boolean importEmployeesToDB(String filePath) {
+	public int[] importEmployeesToDB(String filePath) {
 	    List<String[]> data = null;
 	    int successCount = 0;
 	    List<String> errorMessages = new ArrayList<>();
@@ -22,7 +22,8 @@ public class EmployeeService {
 	        data = CSVReader.readCSV(filePath);
 	    } catch (IOException e) {
 	        e.printStackTrace();
-	        return false;
+	        return new int[] { 0, 0 };
+
 	    }
 
 	    for (int i = 1; i < data.size(); i++) {
@@ -74,7 +75,7 @@ public class EmployeeService {
 	        System.err.println(err);
 	    }
 
-	    return successCount == data.size() - 1 && errorMessages.isEmpty();
+	    return new int[] { data.size()-1, successCount };
 	}
 
 	public List<Employee> getAllEmployees() {
