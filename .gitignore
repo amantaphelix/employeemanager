@@ -5,7 +5,7 @@ bin/
 
 *.env
 
-db.properties
+*.properties
 
 *.log
 *.DS_Store
