@@ -2,14 +2,19 @@ package com.litmus7.employeemanager.dto;
 
 public class Response<T> {
     private int statusCode;
-    private String message;
+    private String errorMessage;
     private T data;
 
     public Response() {}
 
-    public Response(int statusCode, String message, T data) {
+    public Response(int statusCode, String errorMessage) {
         this.statusCode = statusCode;
-        this.message = message;
+        this.errorMessage = errorMessage;
+    }
+    
+    public Response(int statusCode, String errorMessage, T data) {
+        this.statusCode = statusCode;
+        this.errorMessage = errorMessage;
         this.data = data;
     }
 
@@ -21,12 +26,12 @@ public class Response<T> {
         this.statusCode = statusCode;
     }
 
-    public String getMessage() {
-        return message;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public T getData() {

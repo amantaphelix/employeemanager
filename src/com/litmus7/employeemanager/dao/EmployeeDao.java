@@ -1,26 +1,23 @@
 package com.litmus7.employeemanager.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.litmus7.employeemanager.constants.SQLConstants;
 import com.litmus7.employeemanager.dto.Employee;
-import com.litmus7.employeemanager.dto.Response;
 import com.litmus7.employeemanager.util.DBConnection;
 
 public class EmployeeDao {
 	
-    public boolean saveEmployee(Employee employee) throws SQLIntegrityConstraintViolationException {
+    public boolean saveEmployee(Employee employee) {
     	try (Connection conn = DBConnection.getConnection();
     	        PreparedStatement stmt = conn.prepareStatement(SQLConstants.INSERT_EMPLOYEE)) {
 
-    	        stmt.setInt(1, employee.getEmpId());
+    	        stmt.setInt(1, employee.getEmployeeId());
     	        stmt.setString(2, employee.getFirstName());
     	        stmt.setString(3, employee.getLastName());
     	        stmt.setString(4, employee.getEmail());
@@ -32,9 +29,7 @@ public class EmployeeDao {
     	        int rowsInserted = stmt.executeUpdate();
     	        return rowsInserted > 0;
 
-    	    }catch (SQLIntegrityConstraintViolationException e) {
-    	        throw e;
-    	    }  catch (SQLException e) {
+    	    } catch (SQLException e) {
     	        e.printStackTrace();
     	        return false;
     	    }
@@ -48,17 +43,16 @@ public class EmployeeDao {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Employee emp = new Employee();
-                emp.setEmpId(rs.getInt("emp_id"));
-                emp.setFirstName(rs.getString("first_name"));
-                emp.setLastName(rs.getString("last_name"));
-                emp.setEmail(rs.getString("email"));
-                emp.setPhone(rs.getString("phone"));
-                emp.setDepartment(rs.getString("department"));
-                emp.setSalary(rs.getDouble("salary"));
-                emp.setJoinDate(rs.getDate("join_date").toLocalDate());
-
-                employees.add(emp);
+                Employee employee = new Employee();
+                employee.setEmployeeId(rs.getInt(SQLConstants.COLUMN_EMPLOYEE_ID));
+                employee.setFirstName(rs.getString(SQLConstants.COLUMN_FIRST_NAME));
+                employee.setLastName(rs.getString(SQLConstants.COLUMN_LAST_NAME));
+                employee.setEmail(rs.getString(SQLConstants.COLUMN_EMAIL));
+                employee.setPhone(rs.getString(SQLConstants.COLUMN_PHONE));
+                employee.setDepartment(rs.getString(SQLConstants.COLUMN_DEPARTMENT));
+                employee.setSalary(rs.getDouble(SQLConstants.COLUMN_SALARY));
+                employee.setJoinDate(rs.getDate(SQLConstants.COLUMN_JOIN_DATE).toLocalDate());
+                employees.add(employee);
             }
         } catch (SQLException e) {
             e.printStackTrace(); 
@@ -67,18 +61,31 @@ public class EmployeeDao {
         return employees;
     }
     
-    public boolean employeeExists(int empId) {
+    public Employee getEmployeeById(int employeeId) {
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(SQLConstants.CHECK_EMPLOYEE_EXISTS)) {
-            
-            stmt.setInt(1, empId);
+             PreparedStatement stmt = conn.prepareStatement(SQLConstants.SELECT_EMPLOYEE_BY_ID)) {
+
+            stmt.setInt(1, employeeId);
             ResultSet rs = stmt.executeQuery();
-            return rs.next();
+
+            if (rs.next()) {
+                Employee employee = new Employee();
+                employee.setEmployeeId(rs.getInt(SQLConstants.COLUMN_EMPLOYEE_ID));
+                employee.setFirstName(rs.getString(SQLConstants.COLUMN_FIRST_NAME));
+                employee.setLastName(rs.getString(SQLConstants.COLUMN_LAST_NAME));
+                employee.setEmail(rs.getString(SQLConstants.COLUMN_EMAIL));
+                employee.setPhone(rs.getString(SQLConstants.COLUMN_PHONE));
+                employee.setDepartment(rs.getString(SQLConstants.COLUMN_DEPARTMENT));
+                employee.setSalary(rs.getDouble(SQLConstants.COLUMN_SALARY));
+                employee.setJoinDate(rs.getDate(SQLConstants.COLUMN_JOIN_DATE).toLocalDate());
+                return employee;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return null;
     }
+
 
 
 }

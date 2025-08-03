@@ -25,11 +25,11 @@ public class Employee {
 	    this.joinDate = joinDate;
 	}
 	
-	public int getEmpId() {
+	public int getEmployeeId() {
 		return employeeId; 
 	}
 	
-	public void setEmpId(int employeeId) {
+	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId; 
 	}
 	

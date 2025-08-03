@@ -54,7 +54,7 @@ public class EmployeeService {
 	                continue;
 	            }
 
-	            if (dao.employeeExists(employeeId)) {
+	            if (dao.getEmployeeById(employeeId) != null) {
 	                errorMessages.add("Row " + i + ": Duplicate entry for Employee ID " + employeeId);
 	                continue;
 	            }
