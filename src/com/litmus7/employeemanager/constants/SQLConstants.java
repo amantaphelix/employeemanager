@@ -2,7 +2,7 @@ package com.litmus7.employeemanager.constants;
 
 public class SQLConstants {
     public static final String TABLE_EMPLOYEE = "employee";
-    public static final String COLUMN_EMPLOYEE_ID = "emp_id";
+    public static final String COLUMN_EMPLOYEE_ID = "employee_id";
     public static final String COLUMN_FIRST_NAME = "first_name";
     public static final String COLUMN_LAST_NAME = "last_name";
     public static final String COLUMN_EMAIL = "email";
