@@ -14,6 +14,8 @@ import com.litmus7.employeemanager.util.CSVReader;
 import com.litmus7.employeemanager.util.ValidationUtils;
 import com.litmus7.employeemanager.dto.Employee;
 import com.litmus7.employeemanager.dao.EmployeeDao;
+import com.litmus7.employeemanager.exception.EmployeeDaoException;
+import com.litmus7.employeemanager.exception.EmployeeServiceException;
 
 public class EmployeeService {
     private EmployeeDao dao = new EmployeeDao();
@@ -34,7 +36,7 @@ public class EmployeeService {
         }
     }
 
-    public int[] importEmployeesToDB(String filePath) {
+    public int[] importEmployeesToDB(String filePath) throws EmployeeServiceException{
         List<String[]> data = null;
         int successCount = 0;
 
@@ -42,7 +44,7 @@ public class EmployeeService {
             data = CSVReader.readCSV(filePath);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to read CSV file: " + filePath, e);
-            return new int[]{0, 0};
+            throw new EmployeeServiceException("Error reading CSV file: " + filePath, e);
         }
 
         for (int i = 1; i < data.size(); i++) {
@@ -75,10 +77,12 @@ public class EmployeeService {
                     continue;
                 }
 
-                if (dao.saveEmployee(employee)) {
-                    successCount++;
-                } else {
-                    LOGGER.warning("Row " + i + ": Failed to insert employee ID " + employeeId);
+                try {
+                    if (dao.saveEmployee(employee)) {
+                        successCount++;
+                    }
+                } catch (EmployeeDaoException e) {
+                    throw new EmployeeServiceException("Service failed while saving employee", e);
                 }
 
             } catch (Exception e) {
@@ -89,7 +93,11 @@ public class EmployeeService {
         return new int[]{data.size() - 1, successCount};
     }
 
-    public List<Employee> getAllEmployees() {
-        return dao.getAllEmployees();
+    public List<Employee> getAllEmployees() throws EmployeeServiceException {
+        try {
+			return dao.getAllEmployees();
+		} catch (EmployeeDaoException e) {
+			throw new EmployeeServiceException("Failed to fetch employee details",e);
+		}
     }
 }

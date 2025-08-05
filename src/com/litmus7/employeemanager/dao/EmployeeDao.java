@@ -10,10 +10,11 @@ import java.util.List;
 import com.litmus7.employeemanager.constants.SQLConstants;
 import com.litmus7.employeemanager.dto.Employee;
 import com.litmus7.employeemanager.util.DBConnection;
+import com.litmus7.employeemanager.exception.EmployeeDaoException;
 
 public class EmployeeDao {
 	
-    public boolean saveEmployee(Employee employee) {
+    public boolean saveEmployee(Employee employee) throws EmployeeDaoException{
     	try (Connection conn = DBConnection.getConnection();
     	        PreparedStatement stmt = conn.prepareStatement(SQLConstants.INSERT_EMPLOYEE)) {
 
@@ -30,12 +31,11 @@ public class EmployeeDao {
     	        return rowsInserted > 0;
 
     	    } catch (SQLException e) {
-    	        e.printStackTrace();
-    	        return false;
+    	    	throw new EmployeeDaoException("Error inserting employee to DB", e);
     	    }
     }
     
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees() throws EmployeeDaoException{
         List<Employee> employees = new ArrayList<>();
 
         try (Connection conn = DBConnection.getConnection();
@@ -55,13 +55,13 @@ public class EmployeeDao {
                 employees.add(employee);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); 
+        	throw new EmployeeDaoException("Error in retrieving employee details from DB", e);
         }
 
         return employees;
     }
     
-    public Employee getEmployeeById(int employeeId) {
+    public Employee getEmployeeById(int employeeId) throws EmployeeDaoException {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQLConstants.SELECT_EMPLOYEE_BY_ID)) {
 
@@ -69,7 +69,7 @@ public class EmployeeDao {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                Employee employee = new Employee();
+                 Employee employee = new Employee();
                 employee.setEmployeeId(rs.getInt(SQLConstants.COLUMN_EMPLOYEE_ID));
                 employee.setFirstName(rs.getString(SQLConstants.COLUMN_FIRST_NAME));
                 employee.setLastName(rs.getString(SQLConstants.COLUMN_LAST_NAME));
@@ -81,7 +81,7 @@ public class EmployeeDao {
                 return employee;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	throw new EmployeeDaoException("Error in retrieving employee details from DB", e);
         }
         return null;
     }
