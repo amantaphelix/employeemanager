@@ -13,6 +13,8 @@ import java.util.logging.SimpleFormatter;
 import com.litmus7.employeemanager.util.CSVReader;
 import com.litmus7.employeemanager.util.ValidationUtils;
 import com.litmus7.employeemanager.dto.Employee;
+import com.litmus7.employeemanager.dto.Response;
+import com.litmus7.employeemanager.constants.ApplicationStatusCodes;
 import com.litmus7.employeemanager.dao.EmployeeDao;
 import com.litmus7.employeemanager.exception.EmployeeDaoException;
 import com.litmus7.employeemanager.exception.EmployeeServiceException;
@@ -71,11 +73,17 @@ public class EmployeeService {
                     LOGGER.warning("Row " + i + ": Validation failed for employee ID " + employeeId);
                     continue;
                 }
-
-                if (dao.getEmployeeById(employeeId) != null) {
-                    LOGGER.warning("Row " + i + ": Duplicate entry for Employee ID " + employeeId);
-                    continue;
+                
+                try {
+                    if (dao.getEmployeeById(employeeId) != null) {
+                        LOGGER.warning("Row " + i + ": Duplicate entry for Employee ID " + employeeId);
+                        continue;
+                    }
+                } catch (EmployeeDaoException e) {
+                    LOGGER.log(Level.SEVERE, "Row " + i + ": Failed to check existing employee in DB", e);
+                    throw new EmployeeServiceException("Error checking for existing employee", e);
                 }
+
 
                 try {
                     if (dao.saveEmployee(employee)) {
@@ -100,4 +108,44 @@ public class EmployeeService {
 			throw new EmployeeServiceException("Failed to fetch employee details",e);
 		}
     }
+    
+    public Employee getEmployeeById(int employeeId) throws EmployeeServiceException {
+        try {
+            return dao.getEmployeeById(employeeId);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Failed to fetch employee by ID: " + employeeId, e);
+        }
+    }
+    
+    public boolean updateEmployee(Employee employee) throws EmployeeServiceException {
+        try {
+            if (!ValidationUtils.validateEmployee(employee)) {
+                return false;
+            }
+            return dao.updateEmployee(employee);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Failed to update employee", e);
+        }
+    }
+    
+    public boolean deleteEmployeeById(int employeeId) throws EmployeeServiceException {
+        try {
+            return dao.deleteEmployeeById(employeeId);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Failed to delete employee", e);
+        }
+    }
+
+    public boolean addEmployee(Employee employee) throws EmployeeServiceException {
+        try {
+        	if (!ValidationUtils.validateEmployee(employee)) {
+        	    return false;
+        	}
+
+            return dao.addEmployee(employee);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Service error: Failed to add employee", e);
+        }
+    }
+
 }

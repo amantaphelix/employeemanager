@@ -86,6 +86,61 @@ public class EmployeeDao {
         return null;
     }
 
+    public boolean updateEmployee(Employee employee) throws EmployeeDaoException {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQLConstants.UPDATE_EMPLOYEE)) {
+
+            stmt.setString(1, employee.getFirstName());
+            stmt.setString(2, employee.getLastName());
+            stmt.setString(3, employee.getEmail());
+            stmt.setString(4, employee.getPhone());
+            stmt.setString(5, employee.getDepartment());
+            stmt.setDouble(6, employee.getSalary());
+            stmt.setDate(7, java.sql.Date.valueOf(employee.getJoinDate()));
+            stmt.setInt(8, employee.getEmployeeId());
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            throw new EmployeeDaoException("Error updating employee", e);
+        }
+    }
+
+    public boolean deleteEmployeeById(int employeeId) throws EmployeeDaoException {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQLConstants.DELETE_EMPLOYEE_BY_ID)) {
+
+            stmt.setInt(1, employeeId);
+            int rowsDeleted = stmt.executeUpdate();
+            return rowsDeleted > 0;
+  
+        } catch (SQLException e) {
+            throw new EmployeeDaoException("Error deleting employee with ID " + employeeId + ": " + e.getMessage(), e);
+        }
+
+     }
+    
+
+    public boolean addEmployee(Employee employee) throws EmployeeDaoException {
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SQLConstants.INSERT_EMPLOYEE)) {
+
+            preparedStatement.setInt(1, employee.getEmployeeId());
+            preparedStatement.setString(2, employee.getFirstName());
+            preparedStatement.setString(3, employee.getLastName());
+            preparedStatement.setString(4, employee.getEmail());
+            preparedStatement.setString(5, employee.getPhone());
+            preparedStatement.setString(6, employee.getDepartment());
+            preparedStatement.setDouble(7, employee.getSalary());
+            preparedStatement.setDate(8, java.sql.Date.valueOf(employee.getJoinDate()));
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            return rowsInserted > 0;
+
+        } catch (SQLException e) {
+            throw new EmployeeDaoException("Error inserting employee with ID " + employee.getEmployeeId() + ": " + e.getMessage(), e);
+        }
+    }
 
 
 }
