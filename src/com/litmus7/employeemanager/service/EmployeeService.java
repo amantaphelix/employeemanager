@@ -161,7 +161,7 @@ public class EmployeeService {
             }
 
             try {
-                if (dao.getEmployeeById(employee.getEmployeeId()) != null && validEmployees.contains(employee)) {
+                if (dao.getEmployeeById(employee.getEmployeeId()) != null || validEmployees.contains(employee)) {
                     LOGGER.warning("Batch Row " + (i+1) + ": Employee with ID " + employee.getEmployeeId() + " already exists");
                     continue;
                 }
@@ -177,7 +177,7 @@ public class EmployeeService {
             try {
                 return dao.addEmployeesInBatch(validEmployees);
             } catch (EmployeeDaoException e) {
-                throw new EmployeeServiceException("Failed to add employees in batch", e);
+                throw new EmployeeServiceException("Failed to add employees in batch"+e.getMessage(), e);
             }
 
     }

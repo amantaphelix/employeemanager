@@ -168,9 +168,9 @@ public class EmployeeManagerClient {
             	if (batchResponse.getStatusCode() == ApplicationStatusCodes.SUCCESS) {
             	    System.out.println("All employees added successfully.");
             	} else if (batchResponse.getStatusCode() == ApplicationStatusCodes.PARTIAL_SUCCESS) {
-            	    System.out.println("Some employees were added, but not all. ("+batchResponse.getData()+"/"+employeeList.size()+")");
+            	    System.out.println("Some employees were added, but not all. ("+batchResponse.getData()+" out of "+employeeList.size()+" employees were only added"+")");
             	} else {
-            	    System.out.println("Failed to add any employees.");
+            	    System.out.println(batchResponse.getErrorMessage());
             	}
             	List<Integer> empIdsToTransfer = Arrays.asList(102, 105); 
             	String newDept = "HR";
