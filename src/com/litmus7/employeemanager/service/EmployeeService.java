@@ -1,8 +1,9 @@
 package com.litmus7.employeemanager.service;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -147,5 +148,53 @@ public class EmployeeService {
             throw new EmployeeServiceException("Service error: Failed to add employee", e);
         }
     }
+    
+    public int[] addEmployeesInBatch(List<Employee> employeeList) throws EmployeeServiceException {
+        List<Employee> validEmployees = new ArrayList<>();
 
+        for (int i = 0; i < employeeList.size(); i++) {
+            Employee employee = employeeList.get(i);
+
+            if (!ValidationUtils.validateEmployee(employee)) {
+                LOGGER.warning("Batch Row " + (i+1) + ": Validation failed for employee ID " + employee.getEmployeeId());
+                continue;
+            }
+
+            try {
+                if (dao.getEmployeeById(employee.getEmployeeId()) != null && validEmployees.contains(employee)) {
+                    LOGGER.warning("Batch Row " + (i+1) + ": Employee with ID " + employee.getEmployeeId() + " already exists");
+                    continue;
+                }
+            } catch (EmployeeDaoException e) {
+                LOGGER.log(Level.SEVERE, "Batch Row " + (i+1) + ": Failed to check existing employee in DB", e);
+                throw new EmployeeServiceException("Error checking for existing employee ID: " + employee.getEmployeeId(), e);
+            }
+
+            validEmployees.add(employee);
+        }
+
+       
+            try {
+                return dao.addEmployeesInBatch(validEmployees);
+            } catch (EmployeeDaoException e) {
+                throw new EmployeeServiceException("Failed to add employees in batch", e);
+            }
+
+    }
+
+    public int transferEmployeesToDepartment(List<Integer> employeeIds, String newDepartment) throws EmployeeServiceException {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            throw new EmployeeServiceException("Employee ID list is empty.");
+        }
+        if (newDepartment == null || newDepartment.isBlank()) {
+            throw new EmployeeServiceException("New department name is invalid.");
+        }
+        try {
+			return dao.transferEmployeesToDepartment(employeeIds, newDepartment);
+		} catch (EmployeeDaoException e) {
+			throw new EmployeeServiceException("Error During Department Transfers"+e.getMessage(),e);
+		}
+    }
+
+    
 }

@@ -142,5 +142,63 @@ public class EmployeeDao {
         }
     }
 
+    public int[] addEmployeesInBatch(List<Employee> employeeList) throws EmployeeDaoException {
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(SQLConstants.INSERT_EMPLOYEE)) {
+
+            for (Employee employee : employeeList) {
+            	preparedStatement .setInt(1, employee.getEmployeeId());
+            	preparedStatement .setString(2, employee.getFirstName());
+            	preparedStatement .setString(3, employee.getLastName());
+            	preparedStatement .setString(4, employee.getEmail());
+            	preparedStatement .setString(5, employee.getPhone());
+            	preparedStatement .setString(6, employee.getDepartment());
+            	preparedStatement .setDouble(7, employee.getSalary());
+            	preparedStatement.setDate(8, java.sql.Date.valueOf(employee.getJoinDate()));
+            	preparedStatement .addBatch();
+            }
+
+            return preparedStatement.executeBatch();
+        }catch(SQLException e) 
+        {
+        	throw new EmployeeDaoException("Error inserting employees :" + e.getMessage(), e);
+        }
+    }
+    
+    public int transferEmployeesToDepartment(List<Integer> employeeIds, String newDepartment) throws EmployeeDaoException{
+        
+        int updatedCount = 0;
+
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false); 
+
+            try (PreparedStatement pstmt = conn.prepareStatement(SQLConstants.UPDATE_DEPARTMENT)) {
+                for (Integer empId : employeeIds) {
+                    pstmt.setString(1, newDepartment);
+                    pstmt.setInt(2, empId);
+                    int rowsAffected = pstmt.executeUpdate();
+
+                    if (rowsAffected == 0) {
+                        throw new SQLException("Employee ID " + empId + " not found");
+                    }
+
+                    updatedCount++;
+                }
+
+                conn.commit(); 
+            } catch (SQLException e) {
+                conn.rollback(); 
+                throw new EmployeeDaoException("Transaction failed. Rolled back. " + e.getMessage());
+            } finally {
+                conn.setAutoCommit(true); 
+            }
+        } catch (SQLException e) {
+            throw new EmployeeDaoException("DB Error: " + e.getMessage());
+        }
+
+        return updatedCount;
+    }
+
 
 }

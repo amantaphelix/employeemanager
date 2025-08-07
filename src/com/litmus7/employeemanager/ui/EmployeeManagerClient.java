@@ -1,8 +1,10 @@
 package com.litmus7.employeemanager.ui;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import com.litmus7.employeemanager.constants.ApplicationStatusCodes;
 import com.litmus7.employeemanager.controller.EmployeeManagerController;
 import com.litmus7.employeemanager.dto.Employee;
 import com.litmus7.employeemanager.dto.Response;
@@ -155,7 +157,35 @@ public class EmployeeManagerClient {
                 }
             }
 
-	        
+            List<Employee> employeeList = Arrays.asList(
+            	    new Employee(107, "Arjyou", "Rao", "arjyou.rao@example.com", "5876543211", "IT", 78000.0, LocalDate.of(2025, 6, 1)),
+            	    new Employee(108, "Sara", "Iyer", "sara.iyer@example.com", "9876543212", "Finance", 71000.0, LocalDate.of(2020, 3, 15))
+            	);
+
+            	Response<Integer> batchResponse = controller.addEmployeesInBatch(employeeList);
+
+            	
+            	if (batchResponse.getStatusCode() == ApplicationStatusCodes.SUCCESS) {
+            	    System.out.println("All employees added successfully.");
+            	} else if (batchResponse.getStatusCode() == ApplicationStatusCodes.PARTIAL_SUCCESS) {
+            	    System.out.println("Some employees were added, but not all. ("+batchResponse.getData()+"/"+employeeList.size()+")");
+            	} else {
+            	    System.out.println("Failed to add any employees.");
+            	}
+            	List<Integer> empIdsToTransfer = Arrays.asList(102, 105); 
+            	String newDept = "HR";
+
+            	Response<Boolean> transferResponse = controller.transferEmployeesToDepartment(empIdsToTransfer, newDept);
+
+            	if (transferResponse.getStatusCode() == ApplicationStatusCodes.SUCCESS) {
+            	    System.out.println("Tranferring employees to new department is Successfully completed");
+            	} else {
+            	    System.out.println("Failed Tranferring employees to new department");
+            	}
+
+            	System.out.println("Message: " + transferResponse.getErrorMessage());
+
+
 	    } catch (Exception e) {
 	        System.out.println("Unexpected error occurred: " + e.getMessage());
 	        e.printStackTrace();

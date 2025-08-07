@@ -12,7 +12,7 @@ public class SQLConstants {
     public static final String COLUMN_JOIN_DATE = "join_date";
 
     public static final String INSERT_EMPLOYEE ="INSERT INTO " + TABLE_EMPLOYEE + " (" + COLUMN_EMPLOYEE_ID + ", " + COLUMN_FIRST_NAME + ", " +COLUMN_LAST_NAME + ", " + COLUMN_EMAIL + ", " + COLUMN_PHONE + ", " + COLUMN_DEPARTMENT + ", " +COLUMN_SALARY + ", " + COLUMN_JOIN_DATE + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+    
     public static final String SELECT_EMPLOYEE_BY_ID ="SELECT * FROM " + TABLE_EMPLOYEE + " WHERE " + COLUMN_EMPLOYEE_ID + " = ?";
 
     public static final String SELECT_ALL_EMPLOYEES ="SELECT * FROM " + TABLE_EMPLOYEE;
@@ -30,5 +30,8 @@ public class SQLConstants {
     
     public static final String DELETE_EMPLOYEE_BY_ID =
             "DELETE FROM " + TABLE_EMPLOYEE + " WHERE " + COLUMN_EMPLOYEE_ID + " = ?";
+    
+    public static final String UPDATE_DEPARTMENT =
+    	    "UPDATE " + TABLE_EMPLOYEE + " SET " + COLUMN_DEPARTMENT + " = ? WHERE " + COLUMN_EMPLOYEE_ID + " = ?";
 
 }

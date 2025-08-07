@@ -17,5 +17,11 @@ public class ApplicationMessages {
     public static final String EMPLOYEE_ADD_SUCCESS = "Employee added successfully.";
     public static final String EMPLOYEE_ADD_FAILED = "Failed to add employee.";
     public static final String INVALID_EMPLOYEE_OBJECT = "Invalid employee data provided.";
-
+    public static final String BATCH_EMPLOYEE_ADDITION_SUCCESS = "Batch employee addition successful.";
+    public static final String BATCH_EMPLOYEE_ADDITION_FAILURE = "Batch employee addition failed";
+    public static final String EMPTY_EMPLOYEE_LIST = "No employees provided for batch addition.";
+    public static final String NO_VALID_EMPLOYEES_TO_ADD = "No valid employees to insert in batch.";
+    public static final String PARTIAL_EMPLOYEE_ADDITION_SUCCESS = "Some employees were added successfully.";
+    public static final String INVALID_TRANSFER_INPUT = "Employee list or department is invalid.";
+    
 }

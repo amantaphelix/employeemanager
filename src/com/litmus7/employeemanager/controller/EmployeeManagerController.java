@@ -6,6 +6,7 @@ import com.litmus7.employeemanager.exception.EmployeeServiceException;
 import com.litmus7.employeemanager.service.EmployeeService;
 import com.litmus7.employeemanager.util.ValidationUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.litmus7.employeemanager.constants.ApplicationStatusCodes;
@@ -123,6 +124,45 @@ public class EmployeeManagerController {
 	        }
 	    } catch (EmployeeServiceException e) {
 	        return new Response<>(ApplicationStatusCodes.FAILURE, ApplicationMessages.SERVICE_ERROR_PREFIX + e.getMessage(), false);
+	    }
+	}
+
+	public Response<Integer> addEmployeesInBatch(List<Employee> employeeList) {
+	    if (employeeList == null || employeeList.isEmpty()) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE, ApplicationMessages.EMPTY_EMPLOYEE_LIST);
+	    }
+
+	    try {
+	        int[] result = employeeService.addEmployeesInBatch(employeeList);
+	        int addedCount = Arrays.stream(result).sum();
+
+	        if (addedCount==employeeList.size()) {
+	            return new Response<>(ApplicationStatusCodes.SUCCESS, ApplicationMessages.BATCH_EMPLOYEE_ADDITION_SUCCESS,addedCount);
+	        } else if(addedCount>0) {
+	        	return new Response<>(ApplicationStatusCodes.PARTIAL_SUCCESS,
+	                    ApplicationMessages.PARTIAL_EMPLOYEE_ADDITION_SUCCESS + " (" + addedCount + "/" + employeeList.size() + ")", addedCount);
+	        }
+	        else {
+	            return new Response<>(ApplicationStatusCodes.FAILURE, ApplicationMessages.NO_VALID_EMPLOYEES_TO_ADD);
+	        }
+	    } catch (EmployeeServiceException e) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE, ApplicationMessages.BATCH_EMPLOYEE_ADDITION_FAILURE + ": " + e.getMessage());
+	    }
+	}
+
+	public Response<Boolean> transferEmployeesToDepartment(List<Integer> employeeIds, String newDepartment) {
+	    if (employeeIds == null || employeeIds.isEmpty() || newDepartment == null || newDepartment.isBlank()) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE, ApplicationMessages.INVALID_TRANSFER_INPUT, false);
+	    }
+
+	    try {
+	        int updatedCount = employeeService.transferEmployeesToDepartment(employeeIds, newDepartment);
+	       
+	        return new Response<>(ApplicationStatusCodes.SUCCESS,
+	                updatedCount + " employees transferred to " + newDepartment + " department.", true);
+	    } catch (EmployeeServiceException e) {
+	        return new Response<>(ApplicationStatusCodes.FAILURE,
+	                "Transfer failed: " + e.getMessage(), false);
 	    }
 	}
 
