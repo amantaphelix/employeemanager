@@ -54,7 +54,7 @@ public class EmployeeManagerClient {
 	        if (choice.equalsIgnoreCase("yes")) {
 	            System.out.print("Enter Employee ID to update: ");
 	            int updateId = scanner.nextInt();
-	            scanner.nextLine(); // consume newline
+	            scanner.nextLine(); 
 
 	            Response<Employee> existingEmpResponse = controller.getEmployeeById(updateId);
 
