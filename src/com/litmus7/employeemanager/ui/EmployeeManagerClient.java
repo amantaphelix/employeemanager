@@ -181,9 +181,10 @@ public class EmployeeManagerClient {
             	    System.out.println("Tranferring employees to new department is Successfully completed, updatedCount:"+transferResponse.getData());
             	} else {
             	    System.out.println("Failed Tranferring employees to new department");
+            	    System.out.println("Message: " + transferResponse.getErrorMessage());
             	}
 
-            	System.out.println("Message: " + transferResponse.getErrorMessage());
+            	
 
 
 	    } catch (Exception e) {
