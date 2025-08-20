@@ -2,7 +2,6 @@ package com.litmus7.employeemanager.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.Properties;
 public class AppErrorMessages {
     private static final Properties props = new Properties();
