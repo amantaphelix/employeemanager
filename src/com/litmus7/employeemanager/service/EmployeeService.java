@@ -28,7 +28,7 @@ public class EmployeeService {
             logger.info("CSV file read successfully. Total rows: {}", data.size() - 1);
         } catch (IOException e) {
             logger.error("Failed to read CSV file: {}", filePath, e);
-            throw new EmployeeServiceException("Error reading CSV file: " + filePath, e);
+            throw new EmployeeServiceException("EMP-SVC-500.fileRead", e);
         }
 
         for (int i = 1; i < data.size(); i++) {
@@ -63,7 +63,7 @@ public class EmployeeService {
                     }
                 } catch (EmployeeDaoException e) {
                     logger.error("Row {}: Failed to check existing employee in DB", e);
-                    throw new EmployeeServiceException("Error checking for existing employee", e);
+                    throw new EmployeeServiceException(e.getErrorCode(), e);
                 }
 
                 try {
@@ -73,7 +73,7 @@ public class EmployeeService {
                     }
                 } catch (EmployeeDaoException e) {
                     logger.error("Row {}: Failed to save employee in DB", e);
-                    throw new EmployeeServiceException("Service failed while saving employee", e);
+                    throw new EmployeeServiceException(e.getErrorCode(), e);
                 }
 
             } catch (Exception e) {
@@ -91,7 +91,7 @@ public class EmployeeService {
             return result;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting getAllEmployees() with exception");
-            throw new EmployeeServiceException("Failed to fetch employee details", e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }finally {
         	logger.trace("Exiting getAllEmployees()");
         }
@@ -104,7 +104,7 @@ public class EmployeeService {
             return emp;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting getEmployeeById() with exception");
-            throw new EmployeeServiceException("Failed to fetch employee by ID: " + employeeId, e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }finally {
         	 logger.trace("Exiting getEmployeeById()");
         }
@@ -121,7 +121,7 @@ public class EmployeeService {
             return updated;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting updateEmployee() with exception");
-            throw new EmployeeServiceException("Failed to update employee", e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }finally {
             logger.trace("Exiting updateEmployee()");}
     }
@@ -133,7 +133,7 @@ public class EmployeeService {
             return deleted;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting deleteEmployeeById() with exception");
-            throw new EmployeeServiceException("Failed to delete employee", e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }finally {
             logger.trace("Exiting deleteEmployeeById()");}
     }
@@ -149,7 +149,7 @@ public class EmployeeService {
             return added;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting addEmployee() with exception");
-            throw new EmployeeServiceException("Service error: Failed to add employee", e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }finally { 
         	logger.trace("Exiting addEmployee()");
         }
@@ -174,7 +174,7 @@ public class EmployeeService {
                 }
             } catch (EmployeeDaoException e) {
                 logger.error("Batch Row {}: Failed to check existing employee in DB", (i + 1), e);
-                throw new EmployeeServiceException("Error checking for existing employee ID: " + employee.getEmployeeId(), e);
+                throw new EmployeeServiceException("e.getErrorCode() " + employee.getEmployeeId(), e);
             }
 
             validEmployees.add(employee);
@@ -185,7 +185,7 @@ public class EmployeeService {
             logger.trace("Exiting addEmployeesInBatch()");
             return result;
         } catch (EmployeeDaoException e) {
-            logger.trace("Exiting addEmployeesInBatch() with exception");
+            logger.trace("e.getErrorCode()");
             throw new EmployeeServiceException("Failed to add employees in batch" + e.getMessage(), e);
         }
     }
@@ -193,10 +193,10 @@ public class EmployeeService {
     public int transferEmployeesToDepartment(List<Integer> employeeIds, String newDepartment) throws EmployeeServiceException {
         logger.trace("Entering transferEmployeesToDepartment()");
         if (employeeIds == null || employeeIds.isEmpty()) {
-            throw new EmployeeServiceException("Employee ID list is empty.");
+            throw new EmployeeServiceException("EMP-SVC-400.batchEmpty");
         }
         if (newDepartment == null || newDepartment.isBlank()) {
-            throw new EmployeeServiceException("New department name is invalid.");
+            throw new EmployeeServiceException("EMP-SVC-400.transferInvalid");
         }
         try {
             int transferred = dao.transferEmployeesToDepartment(employeeIds, newDepartment);
@@ -204,7 +204,7 @@ public class EmployeeService {
             return transferred;
         } catch (EmployeeDaoException e) {
             logger.trace("Exiting transferEmployeesToDepartment() with exception");
-            throw new EmployeeServiceException("Error During Department Transfers" + e.getMessage(), e);
+            throw new EmployeeServiceException(e.getErrorCode(), e);
         }
     }
 }

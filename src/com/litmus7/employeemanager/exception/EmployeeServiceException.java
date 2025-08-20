@@ -1,12 +1,19 @@
 package com.litmus7.employeemanager.exception;
 
 public class EmployeeServiceException extends Exception {
-    public EmployeeServiceException(String message, Throwable cause) {
-        super(message, cause);
+    private final String errorCode;
+
+    public EmployeeServiceException(String errorCode) {
+        super(errorCode);
+        this.errorCode = errorCode;
     }
 
-	public EmployeeServiceException(String message) {
-		// TODO Auto-generated constructor stub
-		super(message);
-	}
+    public EmployeeServiceException(String errorCode, Throwable cause) {
+        super(errorCode, cause);
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
 }

@@ -175,10 +175,10 @@ public class EmployeeManagerClient {
             	List<Integer> empIdsToTransfer = Arrays.asList(102, 105); 
             	String newDept = "HR";
 
-            	Response<Boolean> transferResponse = controller.transferEmployeesToDepartment(empIdsToTransfer, newDept);
+            	Response<Integer> transferResponse = controller.transferEmployeesToDepartment(empIdsToTransfer, newDept);
 
             	if (transferResponse.getStatusCode() == ApplicationStatusCodes.SUCCESS) {
-            	    System.out.println("Tranferring employees to new department is Successfully completed");
+            	    System.out.println("Tranferring employees to new department is Successfully completed, updatedCount:"+transferResponse.getData());
             	} else {
             	    System.out.println("Failed Tranferring employees to new department");
             	}

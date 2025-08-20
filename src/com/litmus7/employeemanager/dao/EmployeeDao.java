@@ -37,7 +37,7 @@ public class EmployeeDao {
             return rowsInserted > 0;
         } catch (SQLException e) {
             logger.error("SQL error inserting employee ID {}", employee.getEmployeeId(), e);
-            throw new EmployeeDaoException("Error inserting employee to DB", e);
+            throw new EmployeeDaoException("EMP-DAO-500.insert", e);
         } finally {
             logger.trace("Exiting saveEmployee for ID: {}", employee.getEmployeeId());
         }
@@ -66,7 +66,7 @@ public class EmployeeDao {
             return employees;
         } catch (SQLException e) {
             logger.error("Error retrieving employee list", e);
-            throw new EmployeeDaoException("Error in retrieving employee details from DB", e);
+            throw new EmployeeDaoException("EMP-DAO-500.select", e);
         } finally {
             logger.trace("Exiting getAllEmployees");
         }
@@ -97,7 +97,7 @@ public class EmployeeDao {
             return null;
         } catch (SQLException e) {
             logger.error("Error retrieving employee with ID {}", employeeId, e);
-            throw new EmployeeDaoException("Error in retrieving employee details from DB", e);
+            throw new EmployeeDaoException("EMP-DAO-500.select", e);
         } finally {
             logger.trace("Exiting getEmployeeById with ID: {}", employeeId);
         }
@@ -123,7 +123,7 @@ public class EmployeeDao {
             return rowsUpdated > 0;
         } catch (SQLException e) {
             logger.error("Error updating employee with ID {}", employee.getEmployeeId(), e);
-            throw new EmployeeDaoException("Error updating employee", e);
+            throw new EmployeeDaoException("EMP-DAO-500.update", e);
         } finally {
             logger.trace("Exiting updateEmployee for ID: {}", employee.getEmployeeId());
         }
@@ -141,7 +141,7 @@ public class EmployeeDao {
             return rowsDeleted > 0;
         } catch (SQLException e) {
             logger.error("Error deleting employee with ID {}", employeeId, e);
-            throw new EmployeeDaoException("Error deleting employee with ID " + employeeId + ": " + e.getMessage(), e);
+            throw new EmployeeDaoException("EMP-DAO-500.delete", e);
         } finally {
             logger.trace("Exiting deleteEmployeeById for ID: {}", employeeId);
         }
@@ -166,7 +166,7 @@ public class EmployeeDao {
 
             return rowsInserted > 0;
         } catch (SQLException e) {
-            throw new EmployeeDaoException("Error inserting employee with ID " + employee.getEmployeeId() + ": " + e.getMessage(), e);
+            throw new EmployeeDaoException("EMP-DAO-500.insert", e);
         } finally {
             logger.trace("Exiting addEmployee for ID: {}", employee.getEmployeeId());
         }
@@ -195,7 +195,7 @@ public class EmployeeDao {
             return result;
         } catch (SQLException e) {
             logger.error("Error inserting employees in batch", e);
-            throw new EmployeeDaoException("Error inserting employees :" + e.getMessage(), e);
+            throw new EmployeeDaoException("EMP-DAO-500.batch", e);
         } finally {
             logger.trace("Exiting addEmployeesInBatch");
         }
@@ -214,23 +214,27 @@ public class EmployeeDao {
 
                     if (rowsAffected == 0) {
                         logger.warn("No employee found for ID {}", employeeId);
-                        throw new SQLException("Employee ID " + employeeId + " not found");
+                        throw new EmployeeDaoException("EMP-DAO-404.employeeNotFound");
                     }
                     updatedCount++;
                 }
                 conn.commit();
                 logger.debug("transferEmployeesToDepartment committed. Employees updated: {}", updatedCount);
+            } catch (EmployeeDaoException e) {
+                conn.rollback();
+                logger.error("Transaction failed. Rolled back.", e);
+                throw e;
             } catch (SQLException e) {
                 conn.rollback();
                 logger.error("Transaction failed for transferEmployeesToDepartment. Rolled back.", e);
-                throw new EmployeeDaoException("Transaction failed. Rolled back. " + e.getMessage());
+                throw new EmployeeDaoException("EMP-DAO-500.transactionfailure", e);
             } finally {
                 conn.setAutoCommit(true);
             }
             return updatedCount;
         } catch (SQLException e) {
             logger.error("Database error in transferEmployeesToDepartment", e);
-            throw new EmployeeDaoException("DB Error: " + e.getMessage());
+            throw new EmployeeDaoException("EMP-DAO-500.general",e);
         } finally {
             logger.trace("Exiting transferEmployeesToDepartment");
         }
